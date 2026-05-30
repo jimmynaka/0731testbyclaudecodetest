@@ -9,8 +9,6 @@ const state = {
   rounds: 3,
   autoRepeat: false,
   tickEnabled: true,
-  tickPattern: true,
-  tickCount: 0,
   isRunning: false,
   phaseStartedAt: 0,
   phaseDurationMs: defaultPhases[0] * 1000,
@@ -35,7 +33,6 @@ const elements = {
   rounds: document.querySelector("#rounds"),
   autoRepeat: document.querySelector("#auto-repeat"),
   tickEnabled: document.querySelector("#tick-enabled"),
-  tickPattern: document.querySelector("#tick-pattern"),
   tickVolume: document.querySelector("#tick-volume"),
   toneStyle: document.querySelector("#tone-style"),
   tonePitch: document.querySelector("#tone-pitch"),
@@ -64,7 +61,6 @@ function syncStateFromInputs() {
   state.rounds = getValidNumber(elements.rounds.value, 1, 1, 99);
   state.autoRepeat = elements.autoRepeat.checked;
   state.tickEnabled = elements.tickEnabled.checked;
-  state.tickPattern = elements.tickPattern.checked;
 }
 
 function renderPhaseRows() {
@@ -139,38 +135,74 @@ async function playChime() {
   const volume = Number(elements.toneVolume.value) / 100;
   const style = elements.toneStyle.value;
 
+  if (style === "crystalRise") {
+    playTone(audioContext, startTime, basePitch * 0.96, volume * 0.16, 1.25, "sine", 0.035, 1.004);
+    playTone(audioContext, startTime + 0.2, basePitch * 1.28, volume * 0.18, 1.65, "sine", 0.03, 1.006);
+    playTone(audioContext, startTime + 0.48, basePitch * 1.62, volume * 0.14, 2.2, "sine", 0.04, 1.008);
+    playTone(audioContext, startTime + 0.52, basePitch * 3.24, volume * 0.05, 1.45, "sine", 0.025, 1.01);
+    return;
+  }
+
+  if (style === "glassRise") {
+    playTone(audioContext, startTime, basePitch * 1.18, volume * 0.17, 0.72, "sine", 0.012, 1.008);
+    playTone(audioContext, startTime + 0.18, basePitch * 1.48, volume * 0.16, 0.98, "sine", 0.011, 1.01);
+    playTone(audioContext, startTime + 0.38, basePitch * 1.88, volume * 0.13, 1.28, "sine", 0.012, 1.012);
+    return;
+  }
+
+  if (style === "morning") {
+    playTone(audioContext, startTime, basePitch * 0.82, volume * 0.13, 0.78, "sine", 0.022, 1.004);
+    playTone(audioContext, startTime + 0.22, basePitch * 1.08, volume * 0.16, 1.05, "sine", 0.02, 1.006);
+    playTone(audioContext, startTime + 0.48, basePitch * 1.38, volume * 0.18, 1.42, "sine", 0.018, 1.008);
+    return;
+  }
+
+  if (style === "clearBell") {
+    playTone(audioContext, startTime, basePitch * 1.42, volume * 0.16, 1.2, "sine", 0.014, 1.006);
+    playTone(audioContext, startTime + 0.12, basePitch * 1.78, volume * 0.12, 1.45, "sine", 0.012, 1.008);
+    playTone(audioContext, startTime + 0.28, basePitch * 2.24, volume * 0.08, 1.65, "sine", 0.012, 1.01);
+    return;
+  }
+
+  if (style === "tripleFocus") {
+    playTone(audioContext, startTime, basePitch * 0.92, volume * 0.12, 0.42, "sine", 0.016, 1.004);
+    playTone(audioContext, startTime + 0.18, basePitch * 1.16, volume * 0.14, 0.58, "sine", 0.014, 1.006);
+    playTone(audioContext, startTime + 0.36, basePitch * 1.46, volume * 0.17, 0.92, "sine", 0.014, 1.008);
+    return;
+  }
+
   if (style === "crystal") {
-    playTone(audioContext, startTime, basePitch, volume * 0.24, 2.8, "sine", 0.055, 0.992);
-    playTone(audioContext, startTime + 0.01, basePitch * 2.01, volume * 0.13, 2.15, "sine", 0.035, 0.996);
+    playTone(audioContext, startTime, basePitch, volume * 0.24, 2.8, "sine", 0.055, 1.002);
+    playTone(audioContext, startTime + 0.01, basePitch * 2.01, volume * 0.13, 2.15, "sine", 0.035, 1.003);
     playTone(audioContext, startTime + 0.03, basePitch * 2.98, volume * 0.075, 1.55, "sine", 0.026, 1.002);
-    playTone(audioContext, startTime + 0.08, basePitch * 4.18, volume * 0.035, 0.95, "sine", 0.018, 0.99);
+    playTone(audioContext, startTime + 0.08, basePitch * 4.18, volume * 0.035, 0.95, "sine", 0.018, 1.004);
     return;
   }
 
   if (style === "glass") {
     playTone(audioContext, startTime, basePitch * 1.35, volume * 0.22, 1.45, "sine", 0.012, 1.006);
-    playTone(audioContext, startTime + 0.015, basePitch * 2.08, volume * 0.14, 1.05, "sine", 0.01, 0.997);
+    playTone(audioContext, startTime + 0.015, basePitch * 2.08, volume * 0.14, 1.05, "sine", 0.01, 1.004);
     playTone(audioContext, startTime + 0.035, basePitch * 2.72, volume * 0.085, 0.72, "sine", 0.008, 1.003);
     return;
   }
 
   if (style === "singing") {
-    playTone(audioContext, startTime, basePitch * 0.72, volume * 0.19, 3.2, "sine", 0.09, 0.995);
+    playTone(audioContext, startTime, basePitch * 0.72, volume * 0.19, 3.2, "sine", 0.09, 1.002);
     playTone(audioContext, startTime + 0.05, basePitch * 1.44, volume * 0.12, 2.65, "sine", 0.08, 1.004);
-    playTone(audioContext, startTime + 0.12, basePitch * 2.16, volume * 0.055, 1.9, "sine", 0.06, 0.998);
+    playTone(audioContext, startTime + 0.12, basePitch * 2.16, volume * 0.055, 1.9, "sine", 0.06, 1.004);
     return;
   }
 
   if (style === "zen") {
-    playTone(audioContext, startTime, basePitch * 0.82, volume * 0.22, 2.55, "triangle", 0.028, 0.985);
-    playTone(audioContext, startTime + 0.025, basePitch * 1.64, volume * 0.11, 1.85, "sine", 0.024, 0.993);
-    playTone(audioContext, startTime + 0.06, basePitch * 2.46, volume * 0.05, 1.15, "sine", 0.02, 0.99);
+    playTone(audioContext, startTime, basePitch * 0.82, volume * 0.22, 2.55, "triangle", 0.028, 1.002);
+    playTone(audioContext, startTime + 0.025, basePitch * 1.64, volume * 0.11, 1.85, "sine", 0.024, 1.004);
+    playTone(audioContext, startTime + 0.06, basePitch * 2.46, volume * 0.05, 1.15, "sine", 0.02, 1.006);
     return;
   }
 
   if (style === "focus") {
-    playTone(audioContext, startTime, basePitch * 1.02, volume * 0.18, 0.78, "sine", 0.02, 0.996);
-    playTone(audioContext, startTime + 0.22, basePitch * 1.5, volume * 0.13, 1.05, "sine", 0.018, 0.994);
+    playTone(audioContext, startTime, basePitch * 1.02, volume * 0.18, 0.78, "sine", 0.02, 1.004);
+    playTone(audioContext, startTime + 0.22, basePitch * 1.5, volume * 0.13, 1.05, "sine", 0.018, 1.006);
     return;
   }
 
@@ -181,24 +213,20 @@ async function playChime() {
   }
 
   if (style === "soft") {
-    playTone(audioContext, startTime, basePitch, volume * 0.42, 0.86, "sine", 0.03, 0.68);
+    playTone(audioContext, startTime, basePitch, volume * 0.42, 0.86, "sine", 0.03, 1.006);
     return;
   }
 
-  playTone(audioContext, startTime, basePitch * 1.16, volume * 0.38, 0.34, "sine", 0.018, 0.78);
-  playTone(audioContext, startTime + 0.15, basePitch * 1.55, volume * 0.3, 0.44, "sine", 0.014, 0.72);
+  playTone(audioContext, startTime, basePitch * 1.16, volume * 0.38, 0.34, "sine", 0.018, 1.006);
+  playTone(audioContext, startTime + 0.15, basePitch * 1.55, volume * 0.3, 0.44, "sine", 0.014, 1.008);
 }
 
-async function playTick(step = 0) {
+async function playTick() {
   const audioContext = await ensureAudioContext();
   const startTime = audioContext.currentTime;
   const volume = Number(elements.tickVolume.value) / 100;
-  const pattern = state.tickPattern ? [1, 1.12, 1.26] : [1, 1, 1];
-  const accent = state.tickPattern ? [1, 0.86, 1.08] : [1, 1, 1];
-  const pitch = 1180 * pattern[step % pattern.length];
-  const level = volume * accent[step % accent.length];
-  playTone(audioContext, startTime, pitch, level * 0.13, 0.05, "sine", 0.004, 0.83);
-  playTone(audioContext, startTime + 0.006, pitch * 2, level * 0.04, 0.034, "sine", 0.003, 0.76);
+  playTone(audioContext, startTime, 1220, volume * 0.13, 0.05, "sine", 0.004, 1.002);
+  playTone(audioContext, startTime + 0.006, 2440, volume * 0.04, 0.034, "sine", 0.003, 1.002);
 }
 
 function playTone(audioContext, startTime, frequency, volume, duration, type, attack, endPitchRatio = 1) {
@@ -251,7 +279,6 @@ function advancePhase() {
   state.phaseStartedAt = performance.now();
   state.pausedRemainingMs = state.phaseDurationMs;
   state.lastTickSecond = null;
-  state.tickCount = 0;
   playChime();
   tick();
 }
@@ -269,8 +296,7 @@ function tick() {
   const tickSecond = Math.ceil(remainingMs / 1000);
   if (state.tickEnabled && tickSecond !== state.lastTickSecond) {
     state.lastTickSecond = tickSecond;
-    playTick(state.tickCount);
-    state.tickCount += 1;
+    playTick();
   }
 
   state.pausedRemainingMs = remainingMs;
@@ -287,7 +313,6 @@ async function startTimer() {
   state.phaseDurationMs ||= state.phases[state.activePhaseIndex] * 1000;
   state.pausedRemainingMs ||= state.phaseDurationMs;
   state.lastTickSecond = null;
-  state.tickCount = 0;
   state.phaseStartedAt = performance.now() - (state.phaseDurationMs - state.pausedRemainingMs);
   playChime();
   tick();
@@ -315,7 +340,6 @@ function resetTimer(shouldRenderRows = true) {
   state.isRunning = false;
   state.activeRound = 1;
   state.lastTickSecond = null;
-  state.tickCount = 0;
   elements.appShell.classList.remove("is-complete");
   setActivePhase(0);
   if (shouldRenderRows) renderPhaseRows();
@@ -357,11 +381,6 @@ elements.autoRepeat.addEventListener("change", () => {
 elements.tickEnabled.addEventListener("change", () => {
   syncStateFromInputs();
   state.lastTickSecond = null;
-});
-
-elements.tickPattern.addEventListener("change", () => {
-  syncStateFromInputs();
-  state.tickCount = 0;
 });
 
 elements.soundTest.addEventListener("click", () => {
