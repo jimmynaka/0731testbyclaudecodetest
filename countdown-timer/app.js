@@ -9,6 +9,8 @@ const state = {
   rounds: 3,
   autoRepeat: false,
   tickEnabled: true,
+  tickPattern: true,
+  tickCount: 0,
   isRunning: false,
   phaseStartedAt: 0,
   phaseDurationMs: defaultPhases[0] * 1000,
@@ -33,6 +35,8 @@ const elements = {
   rounds: document.querySelector("#rounds"),
   autoRepeat: document.querySelector("#auto-repeat"),
   tickEnabled: document.querySelector("#tick-enabled"),
+  tickPattern: document.querySelector("#tick-pattern"),
+  tickVolume: document.querySelector("#tick-volume"),
   toneStyle: document.querySelector("#tone-style"),
   tonePitch: document.querySelector("#tone-pitch"),
   toneVolume: document.querySelector("#tone-volume"),
@@ -60,6 +64,7 @@ function syncStateFromInputs() {
   state.rounds = getValidNumber(elements.rounds.value, 1, 1, 99);
   state.autoRepeat = elements.autoRepeat.checked;
   state.tickEnabled = elements.tickEnabled.checked;
+  state.tickPattern = elements.tickPattern.checked;
 }
 
 function renderPhaseRows() {
@@ -184,12 +189,16 @@ async function playChime() {
   playTone(audioContext, startTime + 0.15, basePitch * 1.55, volume * 0.3, 0.44, "sine", 0.014, 0.72);
 }
 
-async function playTick() {
+async function playTick(step = 0) {
   const audioContext = await ensureAudioContext();
   const startTime = audioContext.currentTime;
-  const volume = Number(elements.toneVolume.value) / 100;
-  playTone(audioContext, startTime, 1320, volume * 0.055, 0.045, "sine", 0.004, 0.82);
-  playTone(audioContext, startTime + 0.006, 2640, volume * 0.018, 0.032, "sine", 0.003, 0.75);
+  const volume = Number(elements.tickVolume.value) / 100;
+  const pattern = state.tickPattern ? [1, 1.12, 1.26] : [1, 1, 1];
+  const accent = state.tickPattern ? [1, 0.86, 1.08] : [1, 1, 1];
+  const pitch = 1180 * pattern[step % pattern.length];
+  const level = volume * accent[step % accent.length];
+  playTone(audioContext, startTime, pitch, level * 0.13, 0.05, "sine", 0.004, 0.83);
+  playTone(audioContext, startTime + 0.006, pitch * 2, level * 0.04, 0.034, "sine", 0.003, 0.76);
 }
 
 function playTone(audioContext, startTime, frequency, volume, duration, type, attack, endPitchRatio = 1) {
@@ -242,6 +251,7 @@ function advancePhase() {
   state.phaseStartedAt = performance.now();
   state.pausedRemainingMs = state.phaseDurationMs;
   state.lastTickSecond = null;
+  state.tickCount = 0;
   playChime();
   tick();
 }
@@ -259,7 +269,8 @@ function tick() {
   const tickSecond = Math.ceil(remainingMs / 1000);
   if (state.tickEnabled && tickSecond !== state.lastTickSecond) {
     state.lastTickSecond = tickSecond;
-    playTick();
+    playTick(state.tickCount);
+    state.tickCount += 1;
   }
 
   state.pausedRemainingMs = remainingMs;
@@ -276,6 +287,7 @@ async function startTimer() {
   state.phaseDurationMs ||= state.phases[state.activePhaseIndex] * 1000;
   state.pausedRemainingMs ||= state.phaseDurationMs;
   state.lastTickSecond = null;
+  state.tickCount = 0;
   state.phaseStartedAt = performance.now() - (state.phaseDurationMs - state.pausedRemainingMs);
   playChime();
   tick();
@@ -303,6 +315,7 @@ function resetTimer(shouldRenderRows = true) {
   state.isRunning = false;
   state.activeRound = 1;
   state.lastTickSecond = null;
+  state.tickCount = 0;
   elements.appShell.classList.remove("is-complete");
   setActivePhase(0);
   if (shouldRenderRows) renderPhaseRows();
@@ -344,6 +357,11 @@ elements.autoRepeat.addEventListener("change", () => {
 elements.tickEnabled.addEventListener("change", () => {
   syncStateFromInputs();
   state.lastTickSecond = null;
+});
+
+elements.tickPattern.addEventListener("change", () => {
+  syncStateFromInputs();
+  state.tickCount = 0;
 });
 
 elements.soundTest.addEventListener("click", () => {
