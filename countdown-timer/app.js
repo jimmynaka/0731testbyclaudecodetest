@@ -30,6 +30,7 @@ const elements = {
   soundTest: document.querySelector("#sound-test"),
   rounds: document.querySelector("#rounds"),
   autoRepeat: document.querySelector("#auto-repeat"),
+  toneStyle: document.querySelector("#tone-style"),
   tonePitch: document.querySelector("#tone-pitch"),
   toneVolume: document.querySelector("#tone-volume"),
 };
@@ -124,24 +125,42 @@ function ensureAudioContext() {
 
 async function playChime() {
   const audioContext = await ensureAudioContext();
-  const now = audioContext.currentTime;
-  const pitch = Number(elements.tonePitch.value);
+  const startTime = audioContext.currentTime;
+  const basePitch = Number(elements.tonePitch.value);
   const volume = Number(elements.toneVolume.value) / 100;
+  const style = elements.toneStyle.value;
+
+  if (style === "wood") {
+    playTone(audioContext, startTime, basePitch * 1.05, volume * 0.58, 0.18, "triangle", 0.012);
+    playTone(audioContext, startTime + 0.18, basePitch * 1.34, volume * 0.42, 0.22, "triangle", 0.01);
+    return;
+  }
+
+  if (style === "soft") {
+    playTone(audioContext, startTime, basePitch, volume * 0.42, 0.86, "sine", 0.03, 0.68);
+    return;
+  }
+
+  playTone(audioContext, startTime, basePitch * 1.16, volume * 0.38, 0.34, "sine", 0.018, 0.78);
+  playTone(audioContext, startTime + 0.15, basePitch * 1.55, volume * 0.3, 0.44, "sine", 0.014, 0.72);
+}
+
+function playTone(audioContext, startTime, frequency, volume, duration, type, attack, endPitchRatio = 1) {
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
 
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(pitch, now);
-  oscillator.frequency.exponentialRampToValueAtTime(pitch * 0.72, now + 0.62);
+  oscillator.type = type;
+  oscillator.frequency.setValueAtTime(frequency, startTime);
+  oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, frequency * endPitchRatio), startTime + duration);
 
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(Math.max(0.001, volume * 0.42), now + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.78);
+  gain.gain.setValueAtTime(0.0001, startTime);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.001, volume), startTime + attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
   oscillator.connect(gain);
   gain.connect(audioContext.destination);
-  oscillator.start(now);
-  oscillator.stop(now + 0.82);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + duration + 0.03);
 }
 
 function stopAnimation() {
