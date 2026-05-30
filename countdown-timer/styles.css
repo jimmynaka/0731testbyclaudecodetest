@@ -30,7 +30,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -238,7 +239,8 @@ button:active {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 3px solid rgba(216, 155, 43, 0.62);
   outline-offset: 3px;
 }
@@ -288,7 +290,8 @@ input:focus-visible {
 }
 
 .phase-row input,
-.field input[type="number"] {
+.field input[type="number"],
+.field select {
   min-width: 0;
   width: 100%;
   min-height: 40px;
@@ -297,6 +300,17 @@ input:focus-visible {
   padding: 0 12px;
   color: var(--text);
   background: #fff;
+}
+
+.field select {
+  padding-right: 36px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--green-dark) 50%) calc(100% - 18px) 52% / 6px 6px
+      no-repeat,
+    linear-gradient(135deg, var(--green-dark) 50%, transparent 50%) calc(100% - 12px) 52% / 6px 6px
+      no-repeat,
+    #fff;
 }
 
 .remove-phase {
