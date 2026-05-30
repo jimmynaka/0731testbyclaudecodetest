@@ -64,6 +64,11 @@
           <span>刻み音を鳴らす</span>
         </label>
 
+        <label class="toggle-row">
+          <input id="tick-pattern" type="checkbox" checked />
+          <span>1・2・3で音程を変える</span>
+        </label>
+
         <div class="tone-settings">
           <label class="field">
             <span>音色</span>
@@ -86,6 +91,10 @@
             <span>音量</span>
             <input id="tone-volume" type="range" min="0" max="100" step="1" value="65" />
           </label>
+          <label class="field">
+            <span>刻み音量</span>
+            <input id="tick-volume" type="range" min="0" max="100" step="1" value="35" />
+          </label>
         </div>
       </section>
     </main>
@@ -101,6 +110,6 @@
       </div>
     </template>
 
-    <script src="./app.js?v=focus-chimes-tick-20260530" defer></script>
+    <script src="./app.js?v=tick-volume-pattern-20260530" defer></script>
   </body>
 </html>
