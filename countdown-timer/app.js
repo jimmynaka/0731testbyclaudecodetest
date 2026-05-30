@@ -130,6 +130,41 @@ async function playChime() {
   const volume = Number(elements.toneVolume.value) / 100;
   const style = elements.toneStyle.value;
 
+  if (style === "crystal") {
+    playTone(audioContext, startTime, basePitch, volume * 0.24, 2.8, "sine", 0.055, 0.992);
+    playTone(audioContext, startTime + 0.01, basePitch * 2.01, volume * 0.13, 2.15, "sine", 0.035, 0.996);
+    playTone(audioContext, startTime + 0.03, basePitch * 2.98, volume * 0.075, 1.55, "sine", 0.026, 1.002);
+    playTone(audioContext, startTime + 0.08, basePitch * 4.18, volume * 0.035, 0.95, "sine", 0.018, 0.99);
+    return;
+  }
+
+  if (style === "glass") {
+    playTone(audioContext, startTime, basePitch * 1.35, volume * 0.22, 1.45, "sine", 0.012, 1.006);
+    playTone(audioContext, startTime + 0.015, basePitch * 2.08, volume * 0.14, 1.05, "sine", 0.01, 0.997);
+    playTone(audioContext, startTime + 0.035, basePitch * 2.72, volume * 0.085, 0.72, "sine", 0.008, 1.003);
+    return;
+  }
+
+  if (style === "singing") {
+    playTone(audioContext, startTime, basePitch * 0.72, volume * 0.19, 3.2, "sine", 0.09, 0.995);
+    playTone(audioContext, startTime + 0.05, basePitch * 1.44, volume * 0.12, 2.65, "sine", 0.08, 1.004);
+    playTone(audioContext, startTime + 0.12, basePitch * 2.16, volume * 0.055, 1.9, "sine", 0.06, 0.998);
+    return;
+  }
+
+  if (style === "zen") {
+    playTone(audioContext, startTime, basePitch * 0.82, volume * 0.22, 2.55, "triangle", 0.028, 0.985);
+    playTone(audioContext, startTime + 0.025, basePitch * 1.64, volume * 0.11, 1.85, "sine", 0.024, 0.993);
+    playTone(audioContext, startTime + 0.06, basePitch * 2.46, volume * 0.05, 1.15, "sine", 0.02, 0.99);
+    return;
+  }
+
+  if (style === "focus") {
+    playTone(audioContext, startTime, basePitch * 1.02, volume * 0.18, 0.78, "sine", 0.02, 0.996);
+    playTone(audioContext, startTime + 0.22, basePitch * 1.5, volume * 0.13, 1.05, "sine", 0.018, 0.994);
+    return;
+  }
+
   if (style === "wood") {
     playTone(audioContext, startTime, basePitch * 1.05, volume * 0.58, 0.18, "triangle", 0.012);
     playTone(audioContext, startTime + 0.18, basePitch * 1.34, volume * 0.42, 0.22, "triangle", 0.01);
