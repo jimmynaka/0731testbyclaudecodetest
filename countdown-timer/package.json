@@ -1,0 +1,9 @@
+{
+  "name": "countdown-timer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ポーン音つきカウントダウンタイマー",
+  "scripts": {
+    "test": "node --test"
+  }
+}

@@ -41,18 +41,8 @@ const elements = {
 
 elements.ringProgress.style.strokeDasharray = `${ringLength}`;
 
-function formatTime(ms) {
-  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
-
-function getValidNumber(value, fallback, min, max) {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return fallback;
-  return Math.min(max, Math.max(min, Math.round(parsed)));
-}
+// formatTime, getValidNumber and computeNextPhase come from logic.js,
+// which is loaded before this script and exposes them as globals.
 
 function syncStateFromInputs() {
   const inputs = [...elements.phaseList.querySelectorAll(".phase-seconds")];
@@ -261,20 +251,21 @@ function setActivePhase(index) {
 }
 
 function advancePhase() {
-  const lastPhase = state.activePhaseIndex >= state.phases.length - 1;
-  const lastRound = !state.autoRepeat && state.activeRound >= state.rounds;
+  const next = computeNextPhase({
+    activePhaseIndex: state.activePhaseIndex,
+    phaseCount: state.phases.length,
+    autoRepeat: state.autoRepeat,
+    activeRound: state.activeRound,
+    rounds: state.rounds,
+  });
 
-  if (lastPhase && lastRound) {
+  if (next.done) {
     finishTimer();
     return;
   }
 
-  if (lastPhase) {
-    state.activeRound += 1;
-    setActivePhase(0);
-  } else {
-    setActivePhase(state.activePhaseIndex + 1);
-  }
+  state.activeRound = next.activeRound;
+  setActivePhase(next.activePhaseIndex);
 
   state.phaseStartedAt = performance.now();
   state.pausedRemainingMs = state.phaseDurationMs;
